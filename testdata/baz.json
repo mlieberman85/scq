@@ -1,0 +1,26 @@
+{
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "subject": [
+        {
+            "name": "baz",
+            "digest": {
+                "sha256": "40ba4fd42d1f3810027d32af727c8b6a7af55d7b345372da8d7bb63cbacada2e"
+            }
+        }
+    ],
+    "predicateType": "https://slsa.dev/provenance/v0.2",
+    "predicate": {
+        "builder": {
+            "id": "test://builder"
+        },
+        "buildType": "test://none",
+        "materials": [
+            {
+                "uri": "test://qux",
+                "digest": {
+                    "sha256": "f2374c128e57b739d3afc8a5627e3546bf8a666a7196f072fb9bd4caebba961a"
+                }
+            }
+        ]
+    }
+}

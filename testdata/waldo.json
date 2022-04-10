@@ -1,0 +1,18 @@
+{
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "subject": [
+        {
+            "name": "waldo",
+            "digest": {
+                "sha256": "9462b403383a6b63283b50958ebdd786f2c2dc63ac088fe8125e37d772fb4123"
+            }
+        }
+    ],
+    "predicateType": "https://slsa.dev/provenance/v0.2",
+    "predicate": {
+        "builder": {
+            "id": "test://builder"
+        },
+        "buildType": "test://none"
+    }
+}

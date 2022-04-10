@@ -1,0 +1,26 @@
+{
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "subject": [
+        {
+            "name": "bar",
+            "digest": {
+                "sha256": "aa3ef4cc044edf83a4c0e2dbce4c5a71ff98bc9f3598a1b359471db93bb464e3"
+            }
+        }
+    ],
+    "predicateType": "https://slsa.dev/provenance/v0.2",
+    "predicate": {
+        "builder": {
+            "id": "test://builder"
+        },
+        "buildType": "test://none",
+        "materials": [
+            {
+                "uri": "test://baz",
+                "digest": {
+                    "sha256": "40ba4fd42d1f3810027d32af727c8b6a7af55d7b345372da8d7bb63cbacada2e"
+                }
+            }
+        ]
+    }
+}

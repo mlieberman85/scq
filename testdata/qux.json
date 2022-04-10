@@ -1,0 +1,18 @@
+{
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "subject": [
+        {
+            "name": "qux",
+            "digest": {
+                "sha256": "f2374c128e57b739d3afc8a5627e3546bf8a666a7196f072fb9bd4caebba961a"
+            }
+        }
+    ],
+    "predicateType": "https://slsa.dev/provenance/v0.2",
+    "predicate": {
+        "builder": {
+            "id": "test://builder"
+        },
+        "buildType": "test://none"
+    }
+}

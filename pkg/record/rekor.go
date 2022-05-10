@@ -30,6 +30,17 @@ type RekorClient struct {
 	client *rekor_client.Rekor
 }
 
+// TODO: Make customizable
+func GetRekorClient() (*RekorClient, error) {
+	rc := rekor_client.Default
+
+	c := RekorClient{
+		rc,
+	}
+
+	return &c, nil
+}
+
 func (rc *RekorClient) GetRecord(hash string) (Record, error) {
 	UUIDs, err := searchRekor(rc.client, hash)
 	if err != nil {
@@ -96,7 +107,7 @@ func searchRekor(rekorClient *rekor_client.Rekor, sha string) ([]string, error) 
 	searchIndexParams.SetTimeout(time.Minute) // TODO: Make configurable
 	searchIndexParams.Query = &models.SearchIndex{}
 
-	searchIndexParams.Query.Hash = sha
+	searchIndexParams.Query.Hash = fmt.Sprintf("%s:%s", "sha256", sha)
 
 	resp, err := rekorClient.Index.SearchIndex(searchIndexParams)
 

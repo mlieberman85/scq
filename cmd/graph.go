@@ -31,7 +31,11 @@ var graphCmd = &cobra.Command{
 	Short: "Generates a supply chain graph based on attestations and metadata",
 	Long:  `TODO.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		c, err := record.GetMongoClient("mongodb://localhost", "supplychain", "attestations")
+		/*c, err := record.GetMongoClient("mongodb://localhost", "supplychain", "attestations")
+		if err != nil {
+			log.Fatal(err)
+		}*/
+		c, err := record.GetRekorClient()
 		if err != nil {
 			log.Fatal(err)
 		}

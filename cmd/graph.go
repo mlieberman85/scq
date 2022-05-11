@@ -31,11 +31,14 @@ var graphCmd = &cobra.Command{
 	Short: "Generates a supply chain graph based on attestations and metadata",
 	Long:  `TODO.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		/*c, err := record.GetMongoClient("mongodb://localhost", "supplychain", "attestations")
+		db, err := cmd.Flags().GetString("db")
 		if err != nil {
 			log.Fatal(err)
-		}*/
-		c, err := record.GetRekorClient()
+			db = "rekor"
+		}
+
+		c, err := getClient(db)
+
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -73,7 +76,27 @@ var graphCmd = &cobra.Command{
 	},
 }
 
+func getClient(db string) (record.RecordClient, error) {
+	switch db {
+	case "rekor":
+		c, err := record.GetRekorClient()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return c, err
+	case "mongo":
+		c, err := record.GetMongoClient("mongodb://127.0.0.1:27017", "supplychain", "attestations")
+		if err != nil {
+			log.Fatal(err)
+		}
+		return c, err
+	}
+
+	return nil, nil
+}
+
 func init() {
 	rootCmd.AddCommand(graphCmd)
 	graphCmd.Flags().String("hash", "g", "Hash of the artifact you want generate a graph for")
+	graphCmd.Flags().String("db", "rekor", "Hit local transparency log instead of public rekor")
 }

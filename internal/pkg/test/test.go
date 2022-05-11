@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"time"
 
@@ -14,13 +15,15 @@ import (
 )
 
 func UploadTestData(testDataDir string) error {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
 	if err != nil {
+		log.Fatal("Error creating mongodb client")
 		return err
 	}
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	err = client.Connect(ctx)
 	if err != nil {
+		log.Fatal("Error connecting to mongodb instance")
 		return err
 	}
 	defer client.Disconnect(ctx)
@@ -28,6 +31,7 @@ func UploadTestData(testDataDir string) error {
 	scDatabase := client.Database(("supplychain"))
 	err = scDatabase.Collection("attestations").Drop(ctx)
 	if err != nil {
+		log.Fatal("Error dropping attestations collection in supplychain db")
 		return err
 	}
 	attestationCollection := scDatabase.Collection("attestations")
@@ -46,6 +50,7 @@ func UploadTestData(testDataDir string) error {
 	var testAttestations []interface{}
 	files, err := ioutil.ReadDir(testDataDir)
 	if err != nil {
+		log.Fatal("Error reading files")
 		return err
 	}
 

@@ -25,12 +25,16 @@ func (scg *SupplyChainGraph) GenerateFromHash(hash string) error {
 	}
 
 	for _, m := range r.GetMaterials() {
+		// Check if seen hash before in these edges.
 		if _, ok := scg.Edges[hash][m.Digest]; !ok {
 			scg.Edges[hash][m.Digest] = struct{}{}
-		}
-		err = scg.GenerateFromHash(m.Digest)
-		if err != nil {
-			// TODO: Ignore only errors where no matching entries are found
+			// Check if processed hash before
+			if _, node := scg.Nodes[m.Digest]; !node {
+				err = scg.GenerateFromHash(m.Digest)
+				if err != nil {
+					// TODO: Ignore only errors where no matching entries are found
+				}
+			}
 		}
 	}
 

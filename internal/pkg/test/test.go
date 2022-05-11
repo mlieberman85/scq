@@ -12,10 +12,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 	b "gopkg.in/mgo.v2/bson"
+
+	"github.com/spf13/viper"
 )
 
 func UploadTestData(testDataDir string) error {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+
+	uri := viper.GetString("mongo.uri")
+	dbname := viper.GetString("mongo.dbname")
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		log.Fatal("Error creating mongodb client")
 		return err
@@ -28,7 +34,7 @@ func UploadTestData(testDataDir string) error {
 	}
 	defer client.Disconnect(ctx)
 
-	scDatabase := client.Database(("supplychain"))
+	scDatabase := client.Database((dbname))
 	err = scDatabase.Collection("attestations").Drop(ctx)
 	if err != nil {
 		log.Fatal("Error dropping attestations collection in supplychain db")

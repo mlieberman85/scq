@@ -23,6 +23,7 @@ import (
 	"github.com/mlieberman85/scq/pkg/graph"
 	"github.com/mlieberman85/scq/pkg/record"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // graphCmd represents the graph command
@@ -85,7 +86,10 @@ func getClient(db string) (record.RecordClient, error) {
 		}
 		return c, err
 	case "mongo":
-		c, err := record.GetMongoClient("mongodb://127.0.0.1:27017", "supplychain", "attestations")
+		uri := viper.GetString("mongo.uri")
+		dbname := viper.GetString("mongo.dbname")
+
+		c, err := record.GetMongoClient(uri, dbname, "attestations")
 		if err != nil {
 			log.Fatal(err)
 		}

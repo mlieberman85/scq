@@ -45,7 +45,7 @@ var graphCmd = &cobra.Command{
 
 		scg := graph.SupplyChainGraph{
 			Nodes: make(map[string]*record.Record),
-			Edges: make(map[string][]string),
+			Edges: make(map[string]map[string]struct{}),
 			RecordManager: &record.Manager{
 				Opts: record.ManagerOpts{
 					IsTest: true,

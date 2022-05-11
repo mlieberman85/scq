@@ -6,13 +6,13 @@ import (
 
 type SupplyChainGraph struct {
 	Nodes         map[string]*record.Record
-	Edges         map[string][]string
+	Edges         map[string]map[string]struct{} // Should this be a set of some sort?
 	RecordManager *record.Manager
 }
 
 func (scg *SupplyChainGraph) GenerateFromHash(hash string) error {
 	if _, ok := scg.Edges[hash]; !ok {
-		scg.Edges[hash] = make([]string, 0)
+		scg.Edges[hash] = make(map[string]struct{})
 	}
 
 	r, err := scg.RecordManager.GetRecord(hash)
@@ -25,7 +25,9 @@ func (scg *SupplyChainGraph) GenerateFromHash(hash string) error {
 	}
 
 	for _, m := range r.GetMaterials() {
-		scg.Edges[hash] = append(scg.Edges[hash], m.Digest)
+		if _, ok := scg.Edges[hash][m.Digest]; !ok {
+			scg.Edges[hash][m.Digest] = struct{}{}
+		}
 		err = scg.GenerateFromHash(m.Digest)
 		if err != nil {
 			// TODO: Ignore only errors where no matching entries are found

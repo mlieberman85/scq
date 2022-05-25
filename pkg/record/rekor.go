@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/in-toto/in-toto-golang/in_toto"
-	rekor_client "github.com/sigstore/rekor/pkg/generated/client"
+	rekor_client "github.com/sigstore/rekor/pkg/client"
+	"github.com/sigstore/rekor/pkg/generated/client"
 	"github.com/sigstore/rekor/pkg/generated/client/entries"
 	"github.com/sigstore/rekor/pkg/generated/client/index"
 	"github.com/sigstore/rekor/pkg/generated/models"
@@ -27,13 +28,15 @@ type RekorRecord struct {
 }
 
 type RekorClient struct {
-	client *rekor_client.Rekor
+	client *client.Rekor
 }
 
 // TODO: Make customizable
 func GetRekorClient() (*RekorClient, error) {
-	rc := rekor_client.Default
-
+	rc, err := rekor_client.GetRekorClient(rekor_server)
+	if err != nil {
+		return nil, err
+	}
 	c := RekorClient{
 		rc,
 	}
@@ -52,11 +55,17 @@ func (rc *RekorClient) GetRecord(hash string) (Record, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		record, err := parseEntry(entry)
-		if err != nil {
-			log.Fatal(err)
+		// TODO: This mean no attestation was found in rekor which should not be the case.
+		// Need to investigate why this is happening. Seems like a rekor issue
+		if entry.Attestation.Data != nil {
+			record, err := parseEntry(entry)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return record, nil
+		} else {
+			continue
 		}
-		return record, nil
 	}
 	return nil, fmt.Errorf("Unreachable!")
 }
@@ -100,7 +109,7 @@ func parseStatement(p string) (*in_toto.ProvenanceStatement, error) {
 	return &ps, nil
 }
 
-func searchRekor(rekorClient *rekor_client.Rekor, sha string) ([]string, error) {
+func searchRekor(rekorClient *client.Rekor, sha string) ([]string, error) {
 	UUIDs := make(map[string]struct{})
 
 	searchIndexParams := index.NewSearchIndexParams()
@@ -131,7 +140,7 @@ func searchRekor(rekorClient *rekor_client.Rekor, sha string) ([]string, error) 
 	return keys, nil
 }
 
-func getEntry(rekorClient *rekor_client.Rekor, UUID string) (*models.LogEntryAnon, error) {
+func getEntry(rekorClient *client.Rekor, UUID string) (*models.LogEntryAnon, error) {
 	getLogEntryByUUIDParams := entries.NewGetLogEntryByUUIDParams()
 	getLogEntryByUUIDParams.SetTimeout(time.Minute)
 	getLogEntryByUUIDParams.EntryUUID = UUID

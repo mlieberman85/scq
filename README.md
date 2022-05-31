@@ -9,7 +9,7 @@ Right now the way you would test it out is:
 ```
 go build
 ./scq test testdata/
-cat testdata/foo.json | jq '.subject[0].digest.sha256' | xargs -I{} ./scq graph --hash {} | jq | less
+cat testdata/foo.json | jq '.subject[0].digest.sha256' | xargs -I{} ./scq graph --db mongo --hash {} | jq | less
 ```
 
 The above commands will store the testdata into mongodb and then generate a graph based on the hash from the `foo.json` test attestation. It will recursively query the mongodb until it can't find any attestations to follow.
